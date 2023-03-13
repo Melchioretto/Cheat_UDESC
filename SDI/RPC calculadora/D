@@ -1,0 +1,7 @@
+#!/bin/bash
+make clean >/dev/null; make >/dev/null 2> /dev/null
+./rpcserver  & 
+ssh localhost mkdir /tmp/rpc
+scp * localhost:/tmp/rpc > /dev/null
+/tmp/rpc/client localhost < stdin.in
+ssh localhost rm -rf /tmp/rpc

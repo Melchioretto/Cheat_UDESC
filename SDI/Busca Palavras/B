@@ -1,0 +1,20 @@
+#!/bin/bash
+nro_proc=`grep Nro_clientes ambiente.in | cut -d " " -f 2`
+
+make clean > /dev/null
+make > /dev/null
+java Servidor < stdin0 &
+for i in `seq 1 $nro_proc`
+do
+    pos=`expr $i + 1`;
+    nom_maquinas=`grep Maquinas ambiente.in | cut -d " " -f $pos`
+    px=`grep Processos ambiente.in | cut -d " " -f $pos`
+    scp $px.class $nom_maquinas: > /dev/null
+    scp stdin0 $nom_maquinas: > /dev/null
+    ssh $nom_maquinas java $px < stdin0
+    ssh $nom_maquinas rm -f $px.class >/dev/null
+done
+
+## Personalize a extensão (map) para garantir que os dados correspondem a sua exexecução
+#cp stderr* > /tmp/error.map
+#cp stdout* > /tmp/output.map
